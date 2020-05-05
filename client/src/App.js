@@ -9,7 +9,7 @@ import Matches from "./containers/Matches";
 import FindNewMatch from "./containers/FindNewMatch";
 import NotFound from "./containers/NotFound";
 
-function App() {
+function App(props) {
   return (
     <>
       <Router>
@@ -18,9 +18,7 @@ function App() {
           <Route exact path="/">
             <Home />
           </Route>
-          <Route exact path="/login">
-            <Login />
-          </Route>
+          <Route path="/login" component={(props) => <Login {...props} />} />
           <Route exact path="/complete-profile">
             <CompleteProfile />
           </Route>
