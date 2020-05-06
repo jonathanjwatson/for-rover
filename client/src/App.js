@@ -22,9 +22,10 @@ function App(props) {
           <Route exact path="/complete-profile">
             <CompleteProfile />
           </Route>
-          <Route exact path="/dashboard">
-            <Dashboard />
-          </Route>
+          <Route
+            path="/dashboard/:id"
+            component={(props) => <Dashboard {...props} />}
+          />
           <Route exact path="/matches">
             <Matches />
           </Route>
