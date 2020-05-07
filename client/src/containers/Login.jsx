@@ -1,18 +1,19 @@
 import React, { Component } from "react";
 import axios from "axios";
+import Input from "../components/Shared/Input/Input";
 
 class Login extends Component {
   state = {
     email: "",
     password: "",
-    error: false,
+    error: "",
   };
 
   handleInputChange = (event) => {
     const { name, value } = event.target;
     this.setState({
       [name]: value,
-      error: false,
+      error: "",
     });
   };
 
@@ -30,7 +31,8 @@ class Login extends Component {
       })
       .catch((err) => {
         console.log(err);
-        this.setState({ error: true });
+        console.log(err.response.data.message);
+        this.setState({ error: err.response.data.message });
       });
   };
   render() {
@@ -43,14 +45,14 @@ class Login extends Component {
             style={{ backgroundColor: "#FE6D73", paddingTop: 3 }}
           >
             <div className="col" style={{ textAlign: "center", float: "none" }}>
-              <p style={{ color: "#ffffff" }}>User Login Failed</p>
+              <p style={{ color: "#ffffff" }}>{this.state.error}</p>
             </div>
           </div>
         )}
         <div className="row">
           <form className="col s12" onSubmit={this.handleSubmit}>
             <div className="row">
-              <div className="input-field col s12">
+              {/* <div className="input-field col s12">
                 <input
                   id="email"
                   type="email"
@@ -60,10 +62,18 @@ class Login extends Component {
                   onChange={this.handleInputChange}
                 />
                 <label htmlFor="email">Email</label>
-              </div>
+              </div> */}
+              <Input
+                id="email"
+                type="email"
+                name="email"
+                value={this.state.email}
+                label="Email"
+                handleChange={this.handleInputChange}
+              />
             </div>
             <div className="row">
-              <div className="input-field col s12">
+              {/* <div className="input-field col s12">
                 <input
                   id="password"
                   type="password"
@@ -73,7 +83,15 @@ class Login extends Component {
                   onChange={this.handleInputChange}
                 />
                 <label htmlFor="password">Password</label>
-              </div>
+              </div> */}
+              <Input
+                id="password"
+                type="password"
+                name="password"
+                value={this.state.password}
+                label="Password"
+                handleChange={this.handleInputChange}
+              />
             </div>
             <div className="row">
               <div className="col">
