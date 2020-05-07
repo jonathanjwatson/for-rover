@@ -1,16 +1,16 @@
-import React from "react";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import "./App.css";
-import NavBar from "./components/Shared/NavBar/NavBar";
-import Home from "./containers/Home/Home";
-import Login from "./containers/Login";
-import CompleteProfile from "./containers/CompleteProfile";
-import Dashboard from "./containers/Dashboard";
-import Matches from "./containers/Matches";
-import FindNewMatch from "./containers/FindNewMatch";
-import NotFound from "./containers/NotFound";
+import React from 'react';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import './App.css';
+import NavBar from './components/Shared/NavBar/NavBar';
+import Home from './containers/Home/Home';
+import Login from './containers/Login';
+import CompleteProfile from './containers/CompleteProfile';
+import Dashboard from './containers/Dashboard';
+import Matches from './containers/Matches';
+import FindNewMatch from './containers/FindNewMatch';
+import NotFound from './containers/NotFound';
 
-function App(props) {
+function App() {
   return (
     <>
       <Router>

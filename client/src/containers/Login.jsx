@@ -17,10 +17,10 @@ class Login extends Component {
       error: "",
     });
   };
-  
+
   // TODO: Write two separate submit functions
   // 1. Calls your new user route.
-  // 2. Calls your existing user login route. 
+  // 2. Calls your existing user login route.
 
   handleSubmit = (event) => {
     event.preventDefault();
@@ -41,9 +41,7 @@ class Login extends Component {
       });
   };
   render() {
-    return (
-      <Form handleSubmit={this.handleSubmit} error={this.state.error}/>
-    );
+    return <Form handleSubmit={this.handleSubmit} error={this.state.error} />;
   }
 }
 
