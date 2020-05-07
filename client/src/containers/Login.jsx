@@ -44,7 +44,7 @@ class Login extends Component {
             id="login-alert"
             style={{ backgroundColor: "#FE6D73", paddingTop: 3 }}
           >
-            <div className="col" style={{ textAlign: "center", float: "none" }}>
+            <div className="col">
               <p style={{ color: "#ffffff" }}>{this.state.error}</p>
             </div>
           </div>
