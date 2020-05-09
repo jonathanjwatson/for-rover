@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../models");
+const jwt = require("jsonwebtoken");
 
 /**
  * Root POST route to create a new user.
@@ -11,9 +12,20 @@ router.post("/", (req, res) => {
 
   if (email && password) {
     db.User.create({ email, password })
-      .then((result) => {
-        console.log(result);
-        res.json(result);
+      .then(async (newUser) => {
+            const token = await jwt.sign(
+              {
+                email: newUser.email,
+                id: newUser.id,
+                exp: Math.floor(Date.now() / 1000) + 60 * 60,
+              },
+              process.env.REACT_APP_SECRET_KEY
+            );
+            console.log(token);
+            await res.json({
+              success: true,
+              data: token,
+            });
       })
       .catch((err) => {
         console.log(err);
@@ -29,6 +41,23 @@ router.post("/", (req, res) => {
       message: "Please enter a valid username and password.",
     });
   }
+});
+
+router.put("/", (req, res) => {
+  const { id, name, breed, age, location, imageURL } = req.body;
+  db.User.update({ name, breed, age, location, imageURL }, { where: id })
+    .then((rowsUpdated) => {
+      res.json({
+        success: true,
+        data: rowsUpdated,
+      });
+    })
+    .catch((err) => {
+      res.status(500).json({
+        success: false,
+        message: "Failed to save user data.",
+      });
+    });
 });
 
 module.exports = router;

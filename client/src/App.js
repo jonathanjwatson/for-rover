@@ -10,6 +10,7 @@ import Dashboard from "./containers/Dashboard";
 import Matches from "./containers/Matches";
 import FindNewMatch from "./containers/FindNewMatch";
 import NotFound from "./containers/NotFound";
+import SignUp from "./containers/SignUp";
 
 function App(props) {
   const [userObject, setUserObject] = useState({});
@@ -21,7 +22,6 @@ function App(props) {
 
   const checkForToken = async () => {
     const tokenFromStorage = await sessionStorage.getItem("jwt");
-    console.log(tokenFromStorage);
     if (tokenFromStorage) {
       const decoded = await jwt.verify(
         tokenFromStorage,
@@ -43,15 +43,31 @@ function App(props) {
   return (
     <>
       <Router>
-        <NavBar isLoggedIn={isLoggedIn} logOutUser={logOutUser} />
+        <NavBar
+          isLoggedIn={isLoggedIn}
+          logOutUser={logOutUser}
+          userObject={userObject}
+        />
         <Switch>
           <Route exact path="/">
             <Home />
           </Route>
-          <Route path="/login" component={(props) => <Login {...props} checkForToken={checkForToken} />} />
-          <Route exact path="/complete-profile">
-            <CompleteProfile />
-          </Route>
+          <Route
+            path="/login"
+            component={(props) => (
+              <Login {...props} checkForToken={checkForToken} />
+            )}
+          />
+          <Route
+            path="/sign-up"
+            component={(props) => (
+              <SignUp {...props} checkForToken={checkForToken} />
+            )}
+          />
+          <Route
+            path="/complete-profile/:id"
+            component={(props) => <CompleteProfile {...props} />}
+          />
           <Route
             path="/dashboard/:id"
             component={(props) => <Dashboard {...props} />}

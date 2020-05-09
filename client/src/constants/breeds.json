@@ -1,0 +1,22 @@
+[
+  {
+    "value": "goldenRetriever",
+    "display": "Golden Retriever"
+  },
+  {
+    "value": "pug",
+    "display": "Pug"
+  },
+  {
+    "value": "chihuaua",
+    "display": "Chihuaua"
+  },
+  {
+    "value": "husky",
+    "display": "Husky"
+  },
+  {
+      "value": "yorkie",
+      "display": "Yorkie"
+  }
+]

@@ -2,9 +2,8 @@ import React, { Component } from "react";
 import axios from "axios";
 import Form from "../components/Shared/Form/Form";
 import jwt from "jsonwebtoken";
-import { Link } from "react-router-dom";
 
-class Login extends Component {
+class SignUp extends Component {
   state = {
     email: "",
     password: "",
@@ -23,7 +22,7 @@ class Login extends Component {
     event.preventDefault();
 
     axios
-      .post("/api/auth", {
+      .post("/api/user", {
         email,
         password,
       })
@@ -37,7 +36,7 @@ class Login extends Component {
           console.log(decoded);
           await sessionStorage.setItem("jwt", response.data.data);
           await this.props.checkForToken();
-          await this.props.history.push(`/dashboard/${decoded.id}`);
+          await this.props.history.push(`/complete-profile/${decoded.id}`);
         }
       })
       .catch((err) => {
@@ -49,17 +48,17 @@ class Login extends Component {
   render() {
     return (
       <>
-        <Form handleSubmit={this.handleSubmit} error={this.state.error} />
         <div className="container">
           <div className="row">
             <div className="col">
-              <Link to="sign-up">Need to create an account?</Link>
+              <h1>Welcome to For Rover! Sign Up Below!</h1>
             </div>
           </div>
         </div>
+        <Form handleSubmit={this.handleSubmit} error={this.state.error} />
       </>
     );
   }
 }
 
-export default Login;
+export default SignUp;

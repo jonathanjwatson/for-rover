@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import PropTypes from "prop-types";
 import Input from "../Input/Input";
 
 const Form = ({ error, handleSubmit }) => {
@@ -63,7 +62,5 @@ const Form = ({ error, handleSubmit }) => {
     </div>
   );
 };
-
-Form.propTypes = {};
 
 export default Form;
