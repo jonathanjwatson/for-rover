@@ -7,12 +7,14 @@ const jwt = require("jsonwebtoken");
  * Root POST route to validate user credentials.
  */
 router.post("/", (req, res) => {
+    console.log("Authentication POST route");
+    console.log(req.body.email);
   db.User.findOne({
-    where: { email: req.body.email },
+    where: { email: req.body.email.trim() },
   })
     .then(async (foundUser) => {
       console.log(foundUser);
-      if (foundUser.password === req.body.password) {
+      if (foundUser && foundUser.password === req.body.password) {
         const token = await jwt.sign(
           {
             email: foundUser.email,

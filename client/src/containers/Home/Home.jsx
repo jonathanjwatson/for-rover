@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import "./Home.css";
-import Puppy from "../../images/puppy.jpg";
 
 class Home extends Component {
   render() {

@@ -7,7 +7,7 @@ const Form = ({ error, handleSubmit }) => {
   const [password, setPassword] = useState("");
 
   return (
-    <div className="container">
+    <div className="container" style={{marginTop: 60}}>
       {error && (
         <div
           className="row"
@@ -20,7 +20,12 @@ const Form = ({ error, handleSubmit }) => {
         </div>
       )}
       <div className="row">
-        <form className="col s12" onSubmit={handleSubmit}>
+        <form
+          className="col s12"
+          onSubmit={(e) => {
+            handleSubmit(e, email, password);
+          }}
+        >
           <div className="row">
             <Input
               id="email"

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
-import Input from "../components/Shared/Input/Input";
 import Form from "../components/Shared/Form/Form";
+import jwt from "jsonwebtoken";
 
 class Login extends Component {
   state = {
@@ -17,22 +17,31 @@ class Login extends Component {
       error: "",
     });
   };
-  
+
   // TODO: Write two separate submit functions
   // 1. Calls your new user route.
-  // 2. Calls your existing user login route. 
+  // 2. Calls your existing user login route.
 
-  handleSubmit = (event) => {
+  handleSubmit = (event, email, password) => {
     event.preventDefault();
 
     axios
-      .post("/api/users", {
-        email: this.state.email,
-        password: this.state.password,
+      .post("/api/auth", {
+        email,
+        password,
       })
-      .then((response) => {
-        console.log(response);
-        this.props.history.push(`/dashboard/${response.data.data._id}`);
+      .then(async (response) => {
+        console.log(response.data.data);
+        if (response.data.success) {
+          const decoded = await jwt.verify(
+            response.data.data,
+            process.env.REACT_APP_SECRET_KEY
+          );
+          console.log(decoded);
+          await sessionStorage.setItem("jwt", response.data.data);
+          await this.props.checkForToken();
+          await this.props.history.push(`/dashboard/${decoded.id}`);
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -41,9 +50,7 @@ class Login extends Component {
       });
   };
   render() {
-    return (
-      <Form handleSubmit={this.handleSubmit} error={this.state.error}/>
-    );
+    return <Form handleSubmit={this.handleSubmit} error={this.state.error} />;
   }
 }
 

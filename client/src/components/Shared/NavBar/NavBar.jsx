@@ -1,7 +1,8 @@
 import React from "react";
 import "./NavBar.css";
+import { Link } from "react-router-dom";
 
-const NavBar = () => {
+const NavBar = (props) => {
   return (
     <nav>
       <div className="nav-wrapper">
@@ -9,15 +10,15 @@ const NavBar = () => {
           Logo
         </a>
         <ul id="nav-mobile" className="right hide-on-med-and-down">
-          <li>
-            <a href="sass.html">Sass</a>
-          </li>
-          <li>
-            <a href="badges.html">Components</a>
-          </li>
-          <li>
-            <a href="collapsible.html">JavaScript</a>
-          </li>
+          {props.isLoggedIn ? (
+            <li onClick={props.logOutUser}>
+              <a href="#">Sign Out</a>
+            </li>
+          ) : (
+            <li>
+              <Link to="/login">Login</Link>
+            </li>
+          )}
         </ul>
       </div>
     </nav>
