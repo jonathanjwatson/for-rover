@@ -12,5 +12,11 @@ module.exports = function (sequelize, DataTypes) {
     location: DataTypes.STRING,
     imageURL: DataTypes.STRING,
   });
+
+  User.associate = function (models) {
+    User.belongsToMany(User, { as: "UserOne", through: "Matches", foreignKey: "userOneId" });
+    User.belongsToMany(User, { as: "UserTwo", through: "Matches", foreignKey: "userTwoId" });
+  };
+
   return User;
 };

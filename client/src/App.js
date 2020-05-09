@@ -23,13 +23,20 @@ function App(props) {
   const checkForToken = async () => {
     const tokenFromStorage = await sessionStorage.getItem("jwt");
     if (tokenFromStorage) {
-      const decoded = await jwt.verify(
-        tokenFromStorage,
-        process.env.REACT_APP_SECRET_KEY
-      );
-      if (decoded && decoded.email && decoded.id) {
-        setUserObject(decoded);
-        setIsLoggedIn(true);
+      try {
+        const decoded = await jwt.verify(
+          tokenFromStorage,
+          process.env.REACT_APP_SECRET_KEY
+        );
+        if (decoded && decoded.email && decoded.id) {
+          setUserObject(decoded);
+          setIsLoggedIn(true);
+        }
+      } catch (e) {
+        setUserObject({});
+        setIsLoggedIn(false);
+        sessionStorage.setItem("jwt", "");
+        console.error(e);
       }
     }
   };

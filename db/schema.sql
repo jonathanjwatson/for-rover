@@ -1,6 +1,11 @@
 DROP DATABASE IF EXISTS `for_rover`;
 CREATE DATABASE `for_rover`;
 
-USE `for_rover`;
+use for_rover;
 
-SELECT * FROM users;
+select * from users;
+
+select * from userMatches;
+
+INSERT INTO usermatches (UserOneId, UserTwoId, userOneStatus, userTwoStatus, createdAt, updatedAt)
+VALUES (1, 2, "pending", "pending", NOW(), NOW());
