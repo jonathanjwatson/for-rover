@@ -3,7 +3,7 @@ const { Op } = require("sequelize");
 const router = express.Router();
 const db = require("../models");
 
-router.get("/:id/new", (req, res) => {
+router.get("/:id/current", (req, res) => {
   console.log(req.params.id);
   db.UserMatch.findAll({
     where: {
@@ -52,6 +52,69 @@ router.get("/:id/new", (req, res) => {
     })
     .catch((err) => {
       console.log(err);
+    });
+});
+
+const generateSetArray = async (array) => {
+  console.log("Called the function");
+  let idSet = new Set();
+  for (let i = 0; i < array.length; i++) {
+    console.log(idSet);
+    await idSet.add(array[i].UserOneId);
+    await idSet.add(array[i].UserTwoId);
+  }
+  let newArray = await Array.from(idSet);
+  return await newArray;
+};
+
+router.get("/:id/new", (req, res) => {
+  db.UserMatch.findAll({
+    where: {
+      [Op.or]: [{ UserOneId: req.params.id }, { UserTwoId: req.params.id }],
+    },
+  })
+    .then(async (results) => {
+      const newResult = await generateSetArray(results);
+      await console.log(newResult);
+      await db.User.findOne({
+        where: {
+          id: {
+            [Op.notIn]: newResult,
+          },
+        },
+        attributes: [
+          "id",
+          "email",
+          "name",
+          "breed",
+          "age",
+          "location",
+          "imageURL",
+        ],
+      })
+        .then((singleNewUser) => {
+          console.log(singleNewUser);
+          if (singleNewUser) {
+            res.json({
+              success: true,
+              data: singleNewUser,
+              message: "Found new user to match with.",
+            });
+          } else {
+            res.json({
+              success: false,
+              data: null,
+              message: "No additional users available.",
+            });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          res.json(err);
+        });
+    })
+    .catch((err) => {
+      res.json(err);
     });
 });
 
