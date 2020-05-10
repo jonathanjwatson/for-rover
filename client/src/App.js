@@ -59,32 +59,34 @@ function App(props) {
           <Route exact path="/">
             <Home />
           </Route>
+          {/* Changed component to render: https://tylermcginnis.com/react-router-pass-props-to-components/ */}
           <Route
             path="/login"
-            component={(props) => (
+            render={(props) => (
               <Login {...props} checkForToken={checkForToken} />
             )}
           />
           <Route
             path="/sign-up"
-            component={(props) => (
+            render={(props) => (
               <SignUp {...props} checkForToken={checkForToken} />
             )}
           />
           <Route
             path="/complete-profile/:id"
-            component={(props) => <CompleteProfile {...props} />}
+            render={(props) => <CompleteProfile {...props} />}
           />
           <Route
             path="/dashboard/:id"
-            component={(props) => <Dashboard {...props} />}
+            render={(props) => <Dashboard {...props} />}
           />
           <Route exact path="/matches">
             <Matches />
           </Route>
-          <Route exact path="/new-match">
-            <FindNewMatch />
-          </Route>
+          <Route
+            path="/new-match/:id"
+            render={(props) => <FindNewMatch {...props} />}
+          />
           <Route path="*">
             <NotFound />
           </Route>
