@@ -30,6 +30,18 @@ router.get("/:id/new", (req, res) => {
         },
       ],
     },
+    include: [
+      {
+        model: db.User,
+        as: "UserOne",
+        attributes: ["id", "email", "name", "breed"],
+      },
+      {
+        model: db.User,
+        as: "UserTwo",
+        attributes: ["id", "email", "name", "breed"],
+      },
+    ],
   })
     .then((results) => {
       console.log(results);
