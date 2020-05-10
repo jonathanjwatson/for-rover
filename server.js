@@ -4,6 +4,7 @@ const path = require("path");
 const db = require("./models");
 const UserController = require("./controllers/usersController");
 const AuthController = require("./controllers/authController");
+const MatchesController = require("./controllers/matchesController");
 
 const PORT = process.env.PORT || 3001;
 
@@ -21,6 +22,7 @@ app.get("/api/config", (req, res) => {
 
 app.use("/api/user", UserController);
 app.use("/api/auth", AuthController);
+app.use("/api/matches", MatchesController);
 
 app.use(express.static("client/build"));
 
