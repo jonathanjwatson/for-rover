@@ -4,31 +4,97 @@ const router = express.Router();
 const db = require("../models");
 
 router.post("/", (req, res) => {
-  const { UserOneId, UserTwoId, userOneStatus } = req.body;
-  //TODO: Add a check to see if the match already exists in the database. 
-  // if not, create it. 
-  db.UserMatch.create({
-    UserOneId: UserOneId,
-    UserTwoId: UserTwoId,
-    userOneStatus: userOneStatus,
-    userTwoStatus: "pending",
-  })
-    .then((result) => {
+  console.log(req.body.UserOneId);
+  console.log(req.body.UserTwoId);
+  db.UserMatch.findOne({
+    where: {
+      [Op.or]: [
+        {
+          [Op.and]: [
+            { UserOneId: req.body.UserOneId },
+            { UserTwoId: req.body.UserTwoId },
+          ],
+        },
+        {
+          [Op.and]: [
+            { UserOneId: req.body.UserTwoId },
+            { UserTwoId: req.body.UserOneId },
+          ],
+        },
+      ],
+    },
+  }).then((result) => {
+    if (result === null) {
+      db.UserMatch.create({
+        UserOneId: req.body.UserOneId,
+        UserTwoId: req.body.UserTwoId,
+        userOneStatus: req.body.userOneStatus,
+        userTwoStatus: "pending",
+      })
+        .then((result) => {
+          console.log(result);
+          res.json({
+            success: true,
+            data: result,
+            message: "Successfully matched with user!",
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+          res.status(500).json({
+            success: false,
+            data: null,
+            message: "Unable to create new match.",
+          });
+        });
+    } else {
       console.log(result);
-      res.json({
-        success: true,
-        data: result,
-        message: "Successfully matched with user!",
-      });
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json({
-        success: false,
-        data: null,
-        message: "Unable to create new match.",
-      });
-    });
+      const propertyToUpdate = "";
+      console.log("userOneStatus: ", result.userOneStatus);
+      console.log("userTwoStatus: ", result.userTwoStatus)
+      console.log("UserOneId: ", result.UserOneId);
+      console.log("UserTwoId: ", result.UserTwoId);
+      console.log("Id to look for: ", req.body.UserOneId);
+      if (
+        result.userOneStatus === "pending" &&
+        req.body.userOneId === result.UserOneId
+      ) {
+        console.log("======IF BLOCK=======");
+        propertyToUpdate = "userOneStatus";
+      } else if (
+        result.userTwoStatus === "pending" &&
+        req.body.userOneId === result.UserTwoId
+      ) {
+        console.log("========ELSE IF BLOCK==========");
+        propertyToUpdate = "userTwoStatus";
+      }
+
+      const updateObject = {
+        [propertyToUpdate]: req.body.userOneStatus,
+      };
+
+      // set the correct status to matched.
+      console.log("========== NOT NULL - FOUND AN ENTRY============");
+      console.log(updateObject);
+      db.UserMatch.update(updateObject, {
+        where: {
+          id: result.id,
+        },
+      })
+        .then((result) => {
+          res.json(result);
+        })
+        .catch((err) => {
+          console.log(err);
+          res.status(500).json({
+            success: false,
+            data: err,
+          });
+        });
+    }
+  });
+  //TODO: Add a check to see if the match already exists in the database.
+  // if not, create it.
 });
 
 router.get("/:id/current", (req, res) => {
@@ -104,7 +170,7 @@ router.get("/:id/new", (req, res) => {
             { UserOneId: req.params.id },
             {
               userOneStatus: {
-                [Op.not]: "matched",
+                [Op.not]: "pending",
               },
             },
           ],
@@ -114,7 +180,7 @@ router.get("/:id/new", (req, res) => {
             { UserTwoId: req.params.id },
             {
               userTwoStatus: {
-                [Op.not]: "matched",
+                [Op.not]: "pending",
               },
             },
           ],
@@ -123,6 +189,8 @@ router.get("/:id/new", (req, res) => {
     },
   })
     .then(async (results) => {
+      console.log("================== RESULTS ================");
+      console.log(results);
       const newResult = await generateSetArray(results);
       await console.log(newResult);
       await db.User.findOne({

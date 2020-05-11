@@ -39,12 +39,20 @@ class FindNewMatch extends Component {
   handleVote = (like) => {
     console.log("Get new like");
     //TODO: API Call via axios
-    // Build an object with the following data:
-    // userOneId = this.props.match.params.id
-    // userTwoId = this.state.potentialMatch.id
     let userOneStatus = like ? "matched" : "rejected";
-    // On Success:
-    this.getNewMatch();
+    axios
+      .post("/api/matches", {
+        UserOneId: this.props.match.params.id,
+        UserTwoId: this.state.potentialMatch.id,
+        userOneStatus: userOneStatus,
+      })
+      .then((result) => {
+        console.log(result);
+        // this.getNewMatch();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   render() {
@@ -57,7 +65,7 @@ class FindNewMatch extends Component {
             <div className="col s12 m6">
               <div className="row">
                 <div className="col s12 m7">
-                  {(!this.state.error) && (
+                  {!this.state.error && (
                     <div className="card">
                       <div className="card-image">
                         <img
