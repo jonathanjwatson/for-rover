@@ -13,19 +13,19 @@ router.post("/", (req, res) => {
   if (email && password) {
     db.User.create({ email, password })
       .then(async (newUser) => {
-            const token = await jwt.sign(
-              {
-                email: newUser.email,
-                id: newUser.id,
-                exp: Math.floor(Date.now() / 1000) + 60 * 60,
-              },
-              process.env.REACT_APP_SECRET_KEY
-            );
-            console.log(token);
-            await res.json({
-              success: true,
-              data: token,
-            });
+        const token = await jwt.sign(
+          {
+            email: newUser.email,
+            id: newUser.id,
+            exp: Math.floor(Date.now() / 1000) + 60 * 60,
+          },
+          process.env.REACT_APP_SECRET_KEY
+        );
+        console.log(token);
+        await res.json({
+          success: true,
+          data: token,
+        });
       })
       .catch((err) => {
         console.log(err);
@@ -43,9 +43,20 @@ router.post("/", (req, res) => {
   }
 });
 
-router.put("/", (req, res) => {
-  const { id, name, breed, age, location, imageURL } = req.body;
-  db.User.update({ name, breed, age, location, imageURL }, { where: id })
+router.put("/:id", (req, res) => {
+  console.log(req.body);
+  const { name, breed, age, location, imageURL } = req.body;
+  const { id } = req.params;
+  db.User.update(
+    {
+      name: name,
+      breed: breed,
+      age: age,
+      location: location,
+      imageURL: imageURL,
+    },
+    { where: { id: req.params.id } }
+  )
     .then((rowsUpdated) => {
       res.json({
         success: true,

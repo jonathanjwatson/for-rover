@@ -1,14 +1,18 @@
 import React, { Component } from "react";
 import Input from "../components/Shared/Input/Input";
+import Button from "../components/Shared/Button/Button";
+import axios from "axios";
+
 const breeds = require("../constants/breeds.json");
 
 class CompleteProfile extends Component {
   state = {
     name: "",
     breed: "none",
-    breedSearch: "",
+    age: "",
+    location: "",
+    imageURL: "",
     availableBreeds: [],
-    displayBreeds: false,
   };
 
   componentDidMount() {
@@ -16,34 +20,6 @@ class CompleteProfile extends Component {
       availableBreeds: breeds,
     });
   }
-
-  handleBreedSearchInputChange = (event) => {
-    const { name, value } = event.target;
-    if (value === "") {
-      this.setState({
-        [name]: value,
-        availableBreeds: breeds,
-      });
-    } else {
-      const filteredBreeds = breeds.filter((breed) => {
-        const regex = new RegExp(this.state.breedSearch, "gi");
-        return breed.display.match(regex);
-      });
-      this.setState({
-        [name]: value,
-        availableBreeds: filteredBreeds,
-      });
-    }
-  };
-
-  handleBreedSearchInputBlur = (event) => {
-    console.log("You left the input");
-    this.setState({ displayBreeds: false });
-  };
-  handleBreedSearchInputFocus = (event) => {
-    console.log("You focused on the input");
-    this.setState({ displayBreeds: true });
-  };
 
   handleChange = (event) => {
     const { name, value } = event.target;
@@ -56,6 +32,24 @@ class CompleteProfile extends Component {
     console.log(event.target.value);
   };
 
+  handleSubmit = (event) => {
+    event.preventDefault();
+    axios
+      .put(`/api/user/${this.props.match.params.id}`, {
+        name: this.state.name,
+        breed: this.state.breed,
+        age: this.state.age,
+        location: this.state.location,
+        imageURL: this.state.imageURL,
+      })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   render() {
     return (
       <div className="container">
@@ -65,7 +59,12 @@ class CompleteProfile extends Component {
           </div>
         </div>
         <div className="row">
-          <form className="col s12">
+          <form
+            className="col s12"
+            onSubmit={(e) => {
+              this.handleSubmit(e);
+            }}
+          >
             <Input
               id="name"
               label="Name"
@@ -74,7 +73,7 @@ class CompleteProfile extends Component {
               value={this.state.name}
               handleChange={this.handleChange}
             />
-            {/* <label htmlFor="breed">Breed</label>
+            <label htmlFor="breed">Breed</label>
             <select
               id="breed"
               name="breed"
@@ -85,26 +84,37 @@ class CompleteProfile extends Component {
               <option value="none" disabled>
                 Select a Breed
               </option>
-              {this.state.availableBreeds.map((breed) => (
-                <option value={breed.value}>{breed.display}</option>
+              {this.state.availableBreeds.map((breed, index) => (
+                <option key={index} value={breed.value}>
+                  {breed.display}
+                </option>
               ))}
-            </select> */}
-            <div className="input-field col s12">
-              <input
-                id="breed-search"
-                type="text"
-                name="breedSearch"
-                value={this.state.breedSearch}
-                onChange={this.handleBreedSearchInputChange}
-                onFocus={this.handleBreedSearchInputFocus}
-                onBlur={this.handleBreedSearchInputBlur}
-              />
-              <label htmlFor="breed-search">Breed</label>
-            </div>
-            {this.state.displayBreeds &&
-              this.state.availableBreeds.map((breed, index) => (
-                <p key={index}>{breed.display}</p>
-              ))}
+            </select>
+            <Input
+              id="age"
+              label="Age"
+              type="text"
+              name="age"
+              value={this.state.age}
+              handleChange={this.handleChange}
+            />
+            <Input
+              id="location"
+              label="Location"
+              type="text"
+              name="location"
+              value={this.state.location}
+              handleChange={this.handleChange}
+            />
+            <Input
+              id="imageURL"
+              label="Image URL"
+              type="text"
+              name="imageURL"
+              value={this.state.imageURL}
+              handleChange={this.handleChange}
+            />
+            <Button text="Complete"></Button>
           </form>
         </div>
       </div>

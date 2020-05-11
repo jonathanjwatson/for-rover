@@ -8,7 +8,7 @@ import Login from "./containers/Login";
 import CompleteProfile from "./containers/CompleteProfile";
 import Dashboard from "./containers/Dashboard";
 import Matches from "./containers/Matches";
-import FindNewMatch from "./containers/FindNewMatch";
+import FindNewMatch from "./containers/FindNewMatch/FindNewMatch";
 import NotFound from "./containers/NotFound";
 import SignUp from "./containers/SignUp";
 

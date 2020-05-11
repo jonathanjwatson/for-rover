@@ -11,13 +11,22 @@ const NavBar = (props) => {
         </a>
         <ul id="nav-mobile" className="right hide-on-med-and-down">
           {props.isLoggedIn ? (
-            <li onClick={props.logOutUser}>
-              <a href="/">Sign Out</a>
-            </li>
+            <>
+              <li>
+                <Link to={`/new-match/${props.userObject.id}`}>
+                  Find New Matches
+                </Link>
+              </li>
+              <li onClick={props.logOutUser}>
+                <a href="/">Sign Out</a>
+              </li>
+            </>
           ) : (
-            <li>
-              <Link to="/login">Login</Link>
-            </li>
+            <>
+              <li>
+                <Link to="/login">Login</Link>
+              </li>
+            </>
           )}
         </ul>
       </div>

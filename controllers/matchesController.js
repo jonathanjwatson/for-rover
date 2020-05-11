@@ -118,4 +118,30 @@ router.get("/:id/new", (req, res) => {
     });
 });
 
+router.post("/", (req, res) => {
+  const { userOneId, userTwoId } = req.body;
+  db.UserMatch.create({
+    userOneId: userOneId,
+    userTwoId: userTwoId,
+    userOneStatus: "matched",
+    userTwoStatus: "pending",
+  })
+    .then((result) => {
+      console.log(result);
+      res.json({
+        success: true,
+        data: result,
+        message: "Successfully matched with user!",
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({
+        success: false,
+        data: null,
+        message: "Unable to create new match.",
+      });
+    });
+});
+
 module.exports = router;
