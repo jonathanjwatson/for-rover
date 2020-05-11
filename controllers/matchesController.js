@@ -3,6 +3,34 @@ const { Op } = require("sequelize");
 const router = express.Router();
 const db = require("../models");
 
+router.post("/", (req, res) => {
+  const { UserOneId, UserTwoId, userOneStatus } = req.body;
+  //TODO: Add a check to see if the match already exists in the database. 
+  // if not, create it. 
+  db.UserMatch.create({
+    UserOneId: UserOneId,
+    UserTwoId: UserTwoId,
+    userOneStatus: userOneStatus,
+    userTwoStatus: "pending",
+  })
+    .then((result) => {
+      console.log(result);
+      res.json({
+        success: true,
+        data: result,
+        message: "Successfully matched with user!",
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({
+        success: false,
+        data: null,
+        message: "Unable to create new match.",
+      });
+    });
+});
+
 router.get("/:id/current", (req, res) => {
   console.log(req.params.id);
   db.UserMatch.findAll({
@@ -70,7 +98,28 @@ const generateSetArray = async (array) => {
 router.get("/:id/new", (req, res) => {
   db.UserMatch.findAll({
     where: {
-      [Op.or]: [{ UserOneId: req.params.id }, { UserTwoId: req.params.id }],
+      [Op.or]: [
+        {
+          [Op.and]: [
+            { UserOneId: req.params.id },
+            {
+              userOneStatus: {
+                [Op.not]: "matched",
+              },
+            },
+          ],
+        },
+        {
+          [Op.and]: [
+            { UserTwoId: req.params.id },
+            {
+              userTwoStatus: {
+                [Op.not]: "matched",
+              },
+            },
+          ],
+        },
+      ],
     },
   })
     .then(async (results) => {
@@ -115,32 +164,6 @@ router.get("/:id/new", (req, res) => {
     })
     .catch((err) => {
       res.json(err);
-    });
-});
-
-router.post("/", (req, res) => {
-  const { userOneId, userTwoId } = req.body;
-  db.UserMatch.create({
-    userOneId: userOneId,
-    userTwoId: userTwoId,
-    userOneStatus: "matched",
-    userTwoStatus: "pending",
-  })
-    .then((result) => {
-      console.log(result);
-      res.json({
-        success: true,
-        data: result,
-        message: "Successfully matched with user!",
-      });
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json({
-        success: false,
-        data: null,
-        message: "Unable to create new match.",
-      });
     });
 });
 
