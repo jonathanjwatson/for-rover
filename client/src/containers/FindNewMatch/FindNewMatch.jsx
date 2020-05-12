@@ -48,7 +48,7 @@ class FindNewMatch extends Component {
       })
       .then((result) => {
         console.log(result);
-        // this.getNewMatch();
+        this.getNewMatch();
       })
       .catch((err) => {
         console.log(err);

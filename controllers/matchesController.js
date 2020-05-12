@@ -23,78 +23,72 @@ router.post("/", (req, res) => {
         },
       ],
     },
-  }).then((result) => {
-    if (result === null) {
-      db.UserMatch.create({
-        UserOneId: req.body.UserOneId,
-        UserTwoId: req.body.UserTwoId,
-        userOneStatus: req.body.userOneStatus,
-        userTwoStatus: "pending",
-      })
-        .then((result) => {
-          console.log(result);
-          res.json({
-            success: true,
-            data: result,
-            message: "Successfully matched with user!",
-          });
+  })
+    .then((result) => {
+      if (result === null) {
+        db.UserMatch.create({
+          UserOneId: req.body.UserOneId,
+          UserTwoId: req.body.UserTwoId,
+          userOneStatus: req.body.userOneStatus,
+          userTwoStatus: "pending",
         })
-        .catch((err) => {
-          console.log(err);
-          res.status(500).json({
+          .then((result) => {
+            console.log(result);
+            res.json({
+              success: true,
+              data: result,
+              message: "Successfully matched with user!",
+            });
+          })
+          .catch((err) => {
+            console.log(err);
+            res.status(500).json({
+              success: false,
+              data: null,
+              message: "Unable to create new match.",
+            });
+          });
+      } else {
+        if (
+          result.userTwoStatus === "pending" &&
+          result.userTwoId === req.body.userOneId
+        ) {
+          db.UserMatch.update(
+            { userTwoStatus: req.body.userOneStatus },
+            {
+              where: {
+                id: result.id,
+              },
+            }
+          )
+            .then((result) => {
+              res.json(result);
+            })
+            .catch((err) => {
+              console.log(err);
+              res.status(500).json({
+                success: false,
+                data: null,
+                message: "Unable to update your match. Please try again later.",
+              });
+            });
+        } else {
+          res.status(400).json({
             success: false,
             data: null,
-            message: "Unable to create new match.",
+            message: "Unable to update your match. Please try again later.",
           });
-        });
-    } else {
-      console.log(result);
-      const propertyToUpdate = "";
-      console.log("userOneStatus: ", result.userOneStatus);
-      console.log("userTwoStatus: ", result.userTwoStatus)
-      console.log("UserOneId: ", result.UserOneId);
-      console.log("UserTwoId: ", result.UserTwoId);
-      console.log("Id to look for: ", req.body.UserOneId);
-      if (
-        result.userOneStatus === "pending" &&
-        req.body.userOneId === result.UserOneId
-      ) {
-        console.log("======IF BLOCK=======");
-        propertyToUpdate = "userOneStatus";
-      } else if (
-        result.userTwoStatus === "pending" &&
-        req.body.userOneId === result.UserTwoId
-      ) {
-        console.log("========ELSE IF BLOCK==========");
-        propertyToUpdate = "userTwoStatus";
+        }
       }
-
-      const updateObject = {
-        [propertyToUpdate]: req.body.userOneStatus,
-      };
-
-      // set the correct status to matched.
-      console.log("========== NOT NULL - FOUND AN ENTRY============");
-      console.log(updateObject);
-      db.UserMatch.update(updateObject, {
-        where: {
-          id: result.id,
-        },
-      })
-        .then((result) => {
-          res.json(result);
-        })
-        .catch((err) => {
-          console.log(err);
-          res.status(500).json({
-            success: false,
-            data: err,
-          });
-        });
-    }
-  });
-  //TODO: Add a check to see if the match already exists in the database.
-  // if not, create it.
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({
+        success: false,
+        data: null,
+        message: "Unable to create your match. Please try again later.",
+      });
+    });
 });
 
 router.get("/:id/current", (req, res) => {
