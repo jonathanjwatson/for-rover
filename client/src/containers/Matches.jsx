@@ -1,13 +1,10 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
 class Matches extends Component {
-    render() {
-        return (
-            <div>
-                Matches
-            </div>
-        );
-    }
+
+  render() {
+    return <div>Matches</div>;
+  }
 }
 
 export default Matches;

@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+} from "react-router-dom";
 import "./App.css";
 import jwt from "jsonwebtoken";
 import NavBar from "./components/Shared/NavBar/NavBar";
@@ -11,6 +15,7 @@ import Matches from "./containers/Matches";
 import FindNewMatch from "./containers/FindNewMatch/FindNewMatch";
 import NotFound from "./containers/NotFound";
 import SignUp from "./containers/SignUp";
+import PrivateRoute from "./components/App/PrivateRoute";
 
 function App(props) {
   const [userObject, setUserObject] = useState({});
@@ -23,6 +28,7 @@ function App(props) {
   const checkForToken = async () => {
     const tokenFromStorage = await sessionStorage.getItem("jwt");
     if (tokenFromStorage) {
+      setIsLoggedIn(true);
       try {
         const decoded = await jwt.verify(
           tokenFromStorage,
@@ -80,9 +86,7 @@ function App(props) {
             path="/dashboard/:id"
             render={(props) => <Dashboard {...props} />}
           />
-          <Route exact path="/matches">
-            <Matches />
-          </Route>
+          <PrivateRoute path="/matches" component={Matches} />
           <Route
             path="/new-match/:id"
             render={(props) => <FindNewMatch {...props} />}
