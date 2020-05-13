@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../models");
 const jwt = require("jsonwebtoken");
+const { Op } = require("sequelize");
 
 /**
  * Root POST route to create a new user.
@@ -68,6 +69,46 @@ router.put("/:id", (req, res) => {
         success: false,
         message: "Failed to save user data.",
       });
+    });
+});
+
+/**
+ * /api/user/:id
+ * return a resource
+ */
+router.get("/:id", (req, res) => {});
+
+/**
+ * /api/user/?breed=goldenRetriever&minAge=3&maxAge=10
+ * return a collection
+ */
+router.get("/", (req, res) => {
+  console.log(req.query);
+  let newObjectToQuery = {};
+  if (req.query.breed) {
+    newObjectToQuery.breed = req.query.breed;
+  }
+  if (req.query.minAge && req.query.maxAge) {
+    newObjectToQuery.age = {
+      [Op.and]: {
+        [Op.gte]: req.query.minAge,
+        [Op.lte]: req.query.maxAge,
+      },
+    };
+  } else if (req.query.minAge) {
+    newObjectToQuery.age = { [Op.gte]: req.query.minAge };
+  } else if (req.query.maxAge) {
+    newObjectToQuery.age = { [Op.lte]: req.query.maxAge };
+  }
+  console.log(newObjectToQuery);
+  db.User.findAll({
+    where: newObjectToQuery,
+  })
+    .then((result) => {
+      res.json(result);
+    })
+    .catch((err) => {
+      res.json(err);
     });
 });
 
